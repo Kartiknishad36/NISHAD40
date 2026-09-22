@@ -22,7 +22,7 @@ youtube-search-python
 youtube-search
 # py_yt fix: code youtubesearchpython use kare
 # agar Youtube.py ab bhi py_yt likhe to:
-py-yt
+youtube-search-python
 
 # ===== Media =====
 Pillow
