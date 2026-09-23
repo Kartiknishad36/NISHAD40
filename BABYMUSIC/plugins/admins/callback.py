@@ -71,7 +71,7 @@ async def unban_assistant(_, callback: CallbackQuery):
         )
 
 
-@app.on_callback_query(filters.regex("ADMIN") & \~BANNED_USERS)
+@app.on_callback_query(filters.regex("ADMIN") & ~BANNED_USERS)
 @languageCB
 async def del_back_playlist(client, CallbackQuery: CallbackQuery, _):
     callback_data = CallbackQuery.data.strip()
