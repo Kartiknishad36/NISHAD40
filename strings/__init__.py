@@ -8,27 +8,30 @@ languages_present = {}
 
 
 def get_string(lang: str):
-    return languages[lang]
+    return languages.get(lang) or languages["en"]
 
 
-for filename in os.listdir(r"./strings/langs/"):
-    if "en" not in languages:
-        languages["en"] = yaml.safe_load(
-            open(r"./strings/langs/en.yml", encoding="utf8")
-        )
-        languages_present["en"] = languages["en"]["name"]
-    if filename.endswith(".yml"):
-        language_name = filename[:-4]
-        if language_name == "en":
-            continue
-        languages[language_name] = yaml.safe_load(
-            open(r"./strings/langs/" + filename, encoding="utf8")
-        )
-        for item in languages["en"]:
-            if item not in languages[language_name]:
-                languages[language_name][item] = languages["en"][item]
+_LANG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "langs")
+
+# always load English first
+with open(os.path.join(_LANG_DIR, "en.yml"), encoding="utf8") as f:
+    languages["en"] = yaml.safe_load(f)
+languages_present["en"] = languages["en"].get("name", "English")
+
+for filename in os.listdir(_LANG_DIR):
+    if not filename.endswith(".yml") or filename == "en.yml":
+        continue
+    language_name = filename[:-4]
+    path = os.path.join(_LANG_DIR, filename)
     try:
-        languages_present[language_name] = languages[language_name]["name"]
-    except:
-        print("There is some issue with the language file inside bot.")
-        exit()
+        with open(path, encoding="utf8") as f:
+            data = yaml.safe_load(f) or {}
+        # fill missing keys from English
+        for item in languages["en"]:
+            if item not in data:
+                data[item] = languages["en"][item]
+        languages[language_name] = data
+        languages_present[language_name] = data.get("name", language_name)
+    except Exception as e:
+        print(f"Language skip {filename}: {e}")
+        # exit() mat karo — en se chalega
