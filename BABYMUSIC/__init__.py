@@ -1,10 +1,10 @@
+from pyrogram import Client
+
 from BABYMUSIC.core.bot import BABY
 from BABYMUSIC.core.dir import dirr
 from BABYMUSIC.core.git import git
 from BABYMUSIC.core.userbot import Userbot
 from BABYMUSIC.misc import dbb, heroku
-from pyrogram import Client
-from SafoneAPI import SafoneAPI
 from .logging import LOGGER
 
 dirr()
@@ -13,8 +13,17 @@ dbb()
 heroku()
 
 app = BABY()
-api = SafoneAPI()
 userbot = Userbot()
+
+# Safone optional — missing package pe bot crash na ho
+try:
+    from SafoneAPI import SafoneAPI
+
+    api = SafoneAPI()
+    LOGGER(__name__).info("SafoneAPI loaded.")
+except Exception as e:
+    api = None
+    LOGGER(__name__).warning(f"SafoneAPI disabled: {e}")
 
 from .platforms import *
 
